@@ -1,3 +1,7 @@
+
+
+
+
 # **数据结构与算法Python**版
 
 ## 一、动态规划
@@ -203,5 +207,30 @@ def maxValue(self, grid: List[List[int]]) -> int:
 #方法二，可以把dp转为一维数组
 ```
 
+f.不同路径
 
+		问题描述：一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。问总共有多少条不同的路径？
+		输入：m=7,n=3
+		输出：28
+
+​			解析：用dp[x][y]表示到达xy位置时，不同的路径数目，和上一题类似，由于只能向右向下运动，所以动态规划的递推关系式为：
+$$
+dp[x][y] = dp[x-1][y]+dp[x][y-1]
+$$
+​			初始化条件为
+$$
+dp[0][0] = 1
+$$
+
+```python
+def uniquePaths(self, m: int, n: int) -> int:
+        dp = [ [0]*n for _ in range(m)]
+        for x in range(m):
+            for y in range(n):
+                if x==0 and y==0:
+                    dp[x][y] = 1
+                else:
+                    dp[x][y] = dp[x-1][y] + dp[x][y-1]
+        return dp[x][y]
+```
 
