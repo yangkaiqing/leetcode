@@ -334,6 +334,30 @@ def countSubstrings(self, s: str) -> int:
         return count
 ```
 
+#### 通配符匹配
+
+```
+def isMatch(self, s: str, p: str) -> bool:
+        m = len(s)+1
+        n = len(p)+1
+        if m > 1 and n == 1:
+            return False
+        dp = [[False]*n for _ in range(m)]
+        dp[0][0] = True
+        for j in range(1,n):
+            if dp[0][j-1]:
+                dp[0][j] = (p[j-1] == '*')
+        for i in range(1,m):
+            for j in range(1,n):
+                if s[i-1] == p[j-1] or p[j-1] == '?':
+                    dp[i][j] = dp[i-1][j-1]
+                elif p[j-1] == '*':
+                    dp[i][j] = dp[i-1][j] or dp[i][j-1]
+        return dp[m-1][n-1]
+```
+
+
+
 #### 围城面积最大的正方形
 
 ```python
