@@ -32,9 +32,9 @@ $$
 
 ### 1.2 例题
 
-#### a. 最大子序列和
+#### 最大子序列和
 
-​    问题描述：给定一个整数数组nums, 找到一个具有最大和的连续子数组(子数组最少包含一个元素)，并返回其最大和。
+​    问题描述：给定一个整数数组nums, 找到一个具有最大和的**连续子数组**(子数组最少包含一个元素)，并返回其最大和。
 
 ​    示例：输入： [-2, 1,-3, **4, -1, 2, 1, -5,** 4] 
 
@@ -59,7 +59,27 @@ $$
         return retval
 ```
 
-#### b. 买卖股票的最佳时机
+#### 最长递增子序列
+
+```
+#子序列不必连续
+#还要优化一下代码
+def lengthOfLIS(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        n  = len(nums)
+        if n == 1:
+            return 1
+        dp = n * [1]
+        for x in range(1,n):
+            for y in range(x):
+                dp[x] = max(dp[x], dp[y]+1) if nums[y] < nums[x]  else dp[x]      
+        return max(dp)
+```
+
+
+
+#### 买卖股票的最佳时机
 
 ​    问题描述：给定一个数组prices，它的第i个元素prices[i]表示一支股票在第天的价格。只可以选择在**某一天**买入这只股票，并且选择在**未来某一天不同日子**卖出，求可以获得的最大利润。你**最多只能完成一次**交易。
 
@@ -104,7 +124,7 @@ def maxProfit(self, prices: List[int]) -> int:
  #方法三：贪心
 ```
 
-#### c. 买卖股票的最佳时机II
+#### 买卖股票的最佳时机II
 
 ​     问题描述：给定一个数组 `prices` ，其中 `prices[i]` 是一支给定股票第 `i` 天的价格。**你可以尽可能地完成更多的交易（多次买卖一支股票）**。**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。**
 
@@ -146,7 +166,7 @@ def maxProfit(self, prices: List[int]) -> int:
         return retval
 ```
 
-#### d.买卖股票的最佳时机III 
+#### 买卖股票的最佳时机III 
 
 ​		包含手续费，这里只要卖出的时候减去手续费就好了。
 
@@ -162,7 +182,7 @@ def maxProfit(self, prices: List[int], fee: int) -> int:
         return nohold
 ```
 
-#### e.礼物的最大价值
+#### 礼物的最大价值
 
 ​		问题描述：在一个 m*n 的棋盘的每一格都放有一个礼物，**每个礼物都有一定的价值（价值大于 0）**。你可以从棋盘的左上角开始拿格子里的礼物，**并每次向右或者向下移动一格、直到到达棋盘的右下角**。给定一个棋盘及其上面的礼物的价值，请计算你最多能拿到多少价值的礼物？
 
@@ -207,7 +227,7 @@ def maxValue(self, grid: List[List[int]]) -> int:
 #方法二，可以把dp转为一维数组
 ```
 
-#### f.不同路径
+#### 不同路径
 
 		问题描述：一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。问总共有多少条不同的路径？
 		输入：m=7,n=3
@@ -232,5 +252,113 @@ def uniquePaths(self, m: int, n: int) -> int:
                 else:
                     dp[x][y] = dp[x-1][y] + dp[x][y-1]
         return dp[x][y]
+```
+
+#### 不同路径II  有障碍物
+
+```
+def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        if not obstacleGrid:
+            return 0
+        m = len(obstacleGrid)
+        n = len(obstacleGrid[0])
+        dp = [[0]*n for _ in range(m)]
+        for x in range(m):
+            for y in range(n):
+               # 初始条件的处理，负责下面会越界
+                if x == 0 and y == 0:
+                    dp[x][y] = 1 - obstacleGrid[x][y]
+                else:
+                    if obstacleGrid[x][y] == 1:
+                        dp[x][y] = 0
+                    else:
+                        dp[x][y] = dp[x-1][y] + dp[x][y-1]
+        return dp[x][y]
+```
+
+#### 最小路径和
+
+```
+# 和求解最大价值礼物思路一模一样
+def minPathSum(self, grid: List[List[int]]) -> int:
+        if not grid:
+            return 0
+        m = len(grid)
+        n = len(grid[0])
+        dp = [[0]*n for _ in range(m)]
+        for x in range(m):
+            for y in range(n):
+                if x == 0 and y == 0:
+                    dp[x][y] = grid[x][y]
+                elif x==0:
+                    dp[x][y] = dp[x][y-1] + grid[x][y]
+                elif y==0:
+                    dp[x][y] = dp[x-1][y] + grid[x][y]
+                else:
+                    dp[x][y] = min(dp[x-1][y],dp[x][y-1]) + grid[x][y]
+        return dp[x][y]
+```
+
+
+
+#### 求解回文子串
+
+​		问题描述：给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。
+
+​		输入："abc" 
+
+​		输出： 3（“a”, "b", "c"）
+
+​       输入： "aaa"
+
+​       输出：6 （"a", "a", "a", "aa", "aa", "aaa"）
+
+```python
+def countSubstrings(self, s: str) -> int:
+        if not s:
+            return 0
+        n  = len(s)
+        dp = [[False]*n for _ in range(n)]
+        count = 0
+        # （x,y）取值顺序
+        # 从 n-1 到 0的写法
+        for x in range(n-1,-1,-1):
+            for y in range(x,n):
+                if s[x] != s[y]:
+                    continue
+                else:
+                    # or的先后顺序不可以颠倒
+                    dp[x][y] =  y-x <= 2 or dp[x+1][y-1]
+                if dp[x][y]:
+                    count += 1
+        return count
+```
+
+#### 围城面积最大的正方形
+
+```python
+ #dp[x][y] 表示以(x,y)为右下角的矩阵，看三个方向的最小值，(x-1,y-1),(x-1,y),(x,y-1)
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        if not matrix:
+            return 0
+        m = len(matrix)
+        n = len(matrix[0])
+        dp = [[0]*n for _ in range(m)]
+        max_l = 0
+        for x in range(m):
+            for y in range(n):
+                if matrix[x][y] == '0':
+                    dp[x][y] = 0
+                else:
+                    #print(x, y)
+                    if x == 0 or y == 0:
+                        dp[x][y] = 1
+                        
+                    else:
+                        
+                        dp[x][y] = min(dp[x-1][y],dp[x][y-1],dp[x-1][y-1]) + 1
+                #print(dp[x][y])
+                max_l = max(max_l, dp[x][y])
+        return max_l * max_l
 ```
 
